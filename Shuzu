@@ -1,0 +1,87 @@
+/**
+寻找 最大数字数组和下标
+反转
+**/
+
+public class Shuzu {
+
+    int[] arr;
+    int max;
+    int xiabiao_max;
+
+    public int[] getArr() {
+        return arr;
+    }
+
+    public void setArr(int[] arr) {
+        this.arr = arr;
+    }
+
+    public int getXiabiao_max() {
+        return this.xiabiao_max;
+    }
+
+    public int getMax() {
+
+        for(int i=0;i<arr.length;i++)
+        {
+         max=arr[0];
+         if(arr[i]>=max)
+           {
+               max=arr[i];
+               this.xiabiao_max=i;
+           }
+
+        }
+        return  max;
+    }
+
+    public int[] convert(){
+        int convert_tmp=arr[0];
+        int convert_tmp_last=arr[arr.length-1];
+        System.out.print("\ni现在是多是"+"交换的数字是"+convert_tmp+"和"+convert_tmp_last);
+        for(int i=0;i<(arr.length/2);i++)
+        {
+            convert_tmp=arr[i];
+            convert_tmp_last=arr[arr.length-i-1];
+            arr[i]=convert_tmp_last;
+            arr[arr.length-i-1]=convert_tmp;
+            /*
+            System.out.print("\ni现在是多是"+i+"交换的数字是"+arr[i]+"和"+ arr[arr.length-i-1]);
+            */
+            //print_arr(arr);
+        }
+        return arr;
+    }
+
+    public static int[] print_arr(int[] arr1){
+        System.out.println(" ");
+        for(int j=0;j<arr1.length;j++){
+            System.out.print(" "+arr1[j]);
+        }
+        System.out.println(" ");
+    return arr1;
+    }
+
+
+
+    public static void main(String args[]){
+        int[ ] arr={12,3,4,8,5,6,6,7,8,8,9,8,99,99};
+        Shuzu shuzu1=new Shuzu();
+        shuzu1.setArr(arr);
+
+         System.out.print("最大值是"+shuzu1.getMax());
+         System.out.print("最大值的下表是"+shuzu1.getXiabiao_max());
+          int[ ] arr1=shuzu1.convert();
+          print_arr(arr1);
+          /*
+          for(int j=0;j<arr1.length;j++){
+            System.out.println("一维数组:for:"+arr1[j]);
+          */
+
+    }
+
+
+
+
+}
