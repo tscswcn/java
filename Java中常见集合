@@ -1,0 +1,112 @@
+Java中常见集合
+
+一、说说常见的集合有哪些？Map接口和Collection接口是所有集合框架的父接口
+
+1：Map接口和Collection集合
+
+    （1）Collection 接口的子接口包括：Set接口和List接口
+
+    （2）Map接口的实现类主要有：HashMap、TreeMap、Hashtable、ConcurrentHashMap以及Properties等
+
+      （3）List接口的实现类主要有：ArrayList、LinkedList、Stack以及Vector
+
+    （4）Set接口的实现类主要有：HashSet、TreeSet、LinkedHashSet等
+
+二、HashMap和HashTable的区别有哪些？（*）
+
+    HashMap没有考虑同步，是线程不安全的；
+
+    HashTable使用了synchronized关键字，是线程安全的；
+
+    前者允许null作为key；后者不允许null作为key；
+
+三、HashMap的底层实现你知道吗？
+
+    在Java8之前，其底层实现是数组+链表实现；
+
+    在Java8使用了数组+链表+红黑树实现；
+
+四、ConcurrentHashMap和HashTable的区别？（*）
+
+    ConcurrentHashMap结合了HashMap和HashTable二者的优势；
+
+    HashMap没有考虑同步，Hashtable考虑了同步的问题。但是Hashtable在每次同步执行时都要锁住整个结构。
+
+    而ConcurrentHashMap锁的方式是稍微细粒度的。ConcurrentHashMap将hash表分为16个桶（默认值），诸如get、put、remove 等常用操作只锁当前需要用到的桶。
+
+五、ConcurrentHashMap的具体实现知道吗？
+
+        在java1.7设计中：该类包含两个静态内部类HashEntry和Segment;前者用来封装映射表的键值对，后者用来充当锁的角色。
+
+    在java1.8中对HashEntry做了改变，具体细节可查看此博客：ConcurrentHashMap在jdk1.8中的改进
+
+    Segment是一种可重入的锁ReentrantLock,每个Segement守护一个HashEntry数组里的元素，当对HashEntry数组的数据进行修改时，必须首先获得对应Segment锁。
+
+//Segement 
+static class Segment<K,V> extends ReentrantLock implements Serializable {
+        private static final long serialVersionUID = 2249069246763182397L;
+        final float loadFactor;
+        Segment(float lf) { this.loadFactor = lf; }
+    }
+ 
+六、HashMap的长度为什么是2的幂次方？
+
+    因为HashMap在存储数据时，通过将key的hash值与length-1进行&运算，实现了当前key的定位，2的幂方可以减少冲突（碰撞）的次数，提高HashMap的查询效率。
+
+    如果length为2的次幂，则length-1转化为二进制必定是1111....的形式，在与h的二进制与操作效率会非常的快，而且空间不浪费。
+
+    如果length-1不是2的次幂，比如length为15，则length-1为14.对应的二进制位1110，在于h与操作，最后一位都为0，而0001,0011,0101,0111,1001,1011,1101这几个位置永远不能存放元素了，空间浪费比较大。
+
+    更糟的是数组可以使用的位置比数组长度小了很多，这意味着进一步增加了碰撞的概率，减慢了查询的效率！造成空间的浪费。
+
+七、List和Set的区别是啥？
+
+    List元素：有序，且可重复
+
+    Set元素：无序 ，且不可重复
+
+    注意：
+
+    1.有序：存入元素的顺序，和取出元素的顺序一致
+
+    2.无序：存入元素的顺序，和取出元素的顺序不一致，不代表随机
+
+八、List、Set和Map的初始化容量和加载因子？
+
+    1.List
+
+        (1)ArrayList的初始化容量是10；加载因子0.5；扩容容量：原容量的0.5倍+1；一次扩容后长度为16；
+
+        (2)Vector,初始化容量为16，加载因子为1；一次扩容后为20；
+
+    2.Set
+
+           HashSet,初始化容量为16，加载因子为0.75；扩容容量为原容量的1倍；一次扩容后容量为32；    
+
+     3.HashMap
+
+            HashMap,初始化容量16，加载因子为0.75；扩容增量：原容量的1倍；一次扩容后容量为32；
+
+九、Comparable和Comparator接口有什么区别？
+
+    Comparable:
+
+    1.Comparable在java.lang包下，接口定义为Comparable<T>，其中T可以将已知对象与之对象进行比较
+
+    2.Comparable对实现它的类强加一个整体排序，称之为自然排序，类中的CompareTo称之为自然比较方法
+
+    3.返回一个负整数，零，正整数。该对象小于、等于、大于指定对象。
+
+    出现异常情况：
+
+    NullPointerException - 如果指定对象为空
+
+    ClassCastException - 如果指定对象的类型阻止它与该对象进行比较。
+
+    Comparator:
+
+    1.Comparator在java.util包下，接口定义为Comparator<T>,T-可比较此比较器的对象类型，已知实现类Collator.
+
+    2.比较功能，对一些对象的集合施加了一个整体排序。可将比较器传递给排序方法（比如Collection.sort或Arrays.sort）,以便对排序顺序进行精确控制。
+
+    3.与Comparable不同，比较器可以可选地允许比较空参数，同时保持对等价的关系。
