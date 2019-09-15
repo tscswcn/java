@@ -1,0 +1,189 @@
+字节流和字符流概念
+字节流：字节流读取的时候，读到一个字节就返回一个字节；主要用于读取图片，MP3，AVI视频文件。
+
+字符流：字符流使用了字节流读到一个或多个字节，如读取中文时，就会一次读取2个字节。只要是处理纯文本数据，就要优先考虑使用字符流。
+
+字节流和字符流区别
+字节流操作的基本单元为字节；字符流操作的基本单元为Unicode码元。
+字节流默认不使用缓冲区；字符流使用缓冲区。
+字节流通常用于处理二进制数据，实际上它可以处理任意类型的数据，但它不支持直接写入或读取Unicode码元；字符流通常处理文本数据，它支持写入及读取Unicode码元。
+创建、删除文件夹
+String path = "F:\\test";
+File myFile = new File(path);
+
+if (!myFile.exists()) {
+    // 创建文件夹
+    myFile.mkdir();
+    // myFile.mkdirs();
+
+    // 删除文件夹
+    myFile.delete();
+}
+
+// mkdirs()可以建立多级文件夹， mkdir()只会建立一级的文件夹
+
+创建、删除文件
+String content = "Hello World";
+
+// 第一种方法：根据文件路径和文件名
+String path = "F:\\test";
+String filename = "test.txt";
+File myFile = new File(path,filename);
+
+// 第二种方法
+String file = "F:\\test\\test.txt";
+File myFile = new File(file);
+
+if (!myFile.exists()) {
+    // 创建文件(前提是目录已存在，若不在，需新建目录即文件夹)
+    myFile.createNewFile();
+
+    // 删除文件
+    myFile.delete();
+}
+
+
+写入文件
+// 第一种：字节流FileOutputStream
+FileOutputStream fop = new FileOutputStream(myFile); 
+byte[] contentInBytes = content.getBytes();
+fop.write(contentInBytes);  
+fop.flush();  
+fop.close(); 
+
+// 第二种：FileWriter(参数true为追加内容，若无则是覆盖内容)
+FileWriter fw = new FileWriter(myFile,true);
+fw.write(content);
+fw.close();
+
+// 第三种：BufferedWriter
+BufferedWriter bw = new BufferedWriter(new FileWriter(myFile,true));
+bw.write(content);  
+bw.flush();  
+bw.close(); 
+
+// 第四种：打印流PrintStream和PrintWriter
+// 字节打印流：PrintStream
+// 字符打印流：PrintWriter
+
+PrintWriter pw = new PrintWriter(new FileWriter(myFile,true));   
+pw.println(content);      // 换行
+pw.print(content);        // 不换行
+pw.close();
+
+// 常用BufferedWriter和PrintWriter
+
+
+读取文件
+FileInputStream
+// 第一种：以字节为单位读取文件，常用于读二进制文件，如图片、声音、影像等文件。 
+InputStream in = new FileInputStream(myFile);
+
+// 一次读一个字节
+int tempbyte;  
+while ((tempbyte = in.read()) != -1) {  
+    System.out.write(tempbyte);  
+}  
+in.close();
+
+// 一次读多个字节
+int byteread = 0;
+byte[] tempbytes = new byte[100];
+ReadFromFile.showAvailableBytes(in);
+while ((byteread = in.read(tempbytes)) != -1) {  
+    System.out.write(tempbytes, 0, byteread);  
+}  
+
+// System.out.write()方法是字符流,System.out.println()方法是字节流
+
+InputStreamReader
+// 第二种：以字符为单位读取文件，常用于读文本，数字等类型的文件 
+Reader reader = new InputStreamReader(new FileInputStream(myFile)); 
+
+// 一次读一个字节
+int tempchar;  
+while ((tempchar = reader.read()) != -1) {  
+    // 对于windows下，\r\n这两个字符在一起时，表示一个换行。  
+    // 但如果这两个字符分开显示时，会换两次行。  
+    // 因此，屏蔽掉\r，或者屏蔽\n。否则，将会多出很多空行。  
+    if (((char) tempchar) != '\r') {  
+        System.out.print((char) tempchar);  
+    }  
+}  
+reader.close();
+
+// 一次读多个字节
+char[] tempchars = new char[30];  
+int charread = 0;  
+// 读入多个字符到字符数组中，charread为一次读取字符数  
+while ((charread = reader.read(tempchars)) != -1) {  
+    // 同样屏蔽掉\r不显示  
+    if ((charread == tempchars.length) && (tempchars[tempchars.length - 1] != '\r')) {  
+        System.out.print(tempchars);  
+    } else {  
+        for (int i = 0; i < charread; i++) {  
+            if (tempchars[i] == '\r') {  
+                continue;  
+            } else {  
+                System.out.print(tempchars[i]);  
+            }  
+        }  
+    }  
+}
+
+BufferedReader
+// 第三种：以行为单位读取文件，常用于读面向行的格式化文件 
+BufferedReader reader = new BufferedReader(new FileReader(myFile));
+String tempString = null;  
+int line = 1;  
+// 一次读入一行，直到读入null为文件结束  
+while ((tempString = reader.readLine()) != null) {  
+    // 显示行号  
+    System.out.println("line " + line + ": " + tempString);  
+    line++;  
+}  
+reader.close();  
+
+// 常用BufferedReader
+
+
+遍历文件(以删除一个文件夹下所有文件为例)
+File[] files=myFile.listFiles();   
+for(int i=0;i<files.length;i++){   
+    if(files[i].isDirectory()){   
+        files[i].delete();   
+    }   
+}  
+
+
+文件函数
+//判断文件是否存在  
+myFile.exists()
+
+//读取文件名称  
+myFile.getName()
+
+//读取文件路径(相对路径)  
+myFile.getPath()
+
+//读取文件绝对路径  
+myFile.getAbsolutePath()
+
+//读取文件的父级路径  
+new File(myFile.getAbsolutePath()).getParent()
+
+//读取文件的大小  
+myFile.length()
+
+//判断文件是否被隐藏  
+myFile.isHidden()
+
+//判断文件是否可读  
+myFile.canRead()
+
+//判断文件是否可写  
+myFile.canWrite()
+
+//判断文件是否为文件夹  
+myFile.isDirectory()
+————————————————
