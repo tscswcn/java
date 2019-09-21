@@ -1,0 +1,142 @@
+【Java8新特性】Lambda表达式的含义及使用方法、方法引用
+
+Java 8是近年来的一个Java编程语言发行版本。Oracle 在 2014 年 3 月发布了它。该版本为Java带来了许多新特性，是一个具有重大改变的版本。
+
+一、Lambda表达式
+Lambda 表达式是在Java 8中引入的，并且成为了Java 8最大的特点。它使得功能性编程变得非常便利，极大地简化了开发工作。
+
+1.语法
+一个Lambda表达式具有下面这样的语法特征。它由三个部分组成：
+
+第一部分为一个括号内用逗号分隔的形参，参数即函数式接口里面方法的参数；
+第二部分为一个箭头符号：->；
+第三部分为方法体，可以是表达式和代码块。
+语法如下：
+
+parameter -> expression body
+下面列举了Lambda表达式的几个最重要的特征：
+
+可选的类型声明：你不用去声明参数的类型。编译器可以从参数的值来推断它是什么类型。
+可选的参数周围的括号：你可以不用在括号内声明单个参数。但是对于很多参数的情况，括号是必需的。
+可选的大括号：如果表达式体里面只有一个语句，那么你不必用大括号括起来。
+可选的返回关键字：如果表达式体只有单个表达式用于值的返回，那么编译器会自动完成这一步。若要指示表达式来返回某个值，则需要使用大括号。
+函数式接口的重要属性是：我们能够使用 Lambda 实例化它们，Lambda 表达式让你能够将函数作为方法参数，或者将代码作为数据对待。Lambda 表达式的引入给开发者带来了不少优点：在 Java 8 之前，匿名内部类，监听器和事件处理器的使用都显得很冗长，代码可读性很差，Lambda 表达式的应用则使代码变得更加紧凑，可读性增强；Lambda 表达式使并行操作大集合变得很方便，可以充分发挥多核 CPU 的优势，更易于为多核处理器编写代码。
+
+2.一个Lambda表达式的例子
+package com.shiyanlou.java8;
+
+public class NewFeaturesTester {
+    public static void main(String args[]){
+        NewFeaturesTester tester = new NewFeaturesTester();
+
+          // 带有类型声明的表达式
+          MathOperation addition = (int a, int b) -> a + b;
+
+          // 没有类型声明的表达式
+          MathOperation subtraction = (a, b) -> a - b;
+
+          // 带有大括号、带有返回语句的表达式
+          MathOperation multiplication = (int a, int b) -> { return a * b; };
+
+          // 没有大括号和return语句的表达式
+          MathOperation division = (int a, int b) -> a / b;
+
+          // 输出结果
+          System.out.println("10 + 5 = " + tester.operate(100, 2, addition));
+          System.out.println("10 - 5 = " + tester.operate(100, 2, subtraction));
+          System.out.println("10 x 5 = " + tester.operate(100, 2, multiplication));
+          System.out.println("10 / 5 = " + tester.operate(100, 2, division));
+
+          // 没有括号的表达式            
+          GreetingService greetService1 = message ->
+          System.out.println("Hello " + message);
+
+          // 有括号的表达式            
+          GreetingService greetService2 = (message) ->
+          System.out.println("Hello " + message);
+
+          // 调用sayMessage方法输出结果
+          greetService1.sayMessage("Shiyanlou");
+          greetService2.sayMessage("Classmate");
+       }
+
+       // 下面是定义的一些接口和方法
+
+       interface MathOperation {
+          int operation(int a, int b);
+       }
+
+       interface GreetingService {
+          void sayMessage(String message);
+       }
+
+       private int operate(int a, int b, MathOperation mathOperation){
+          return mathOperation.operation(a, b);
+       }
+}
+需要注意的是：
+
+Lambda表达式优先用于定义功能接口在行内的实现，即单个方法只有一个接口。在上面的例子中，我们用了多个类型的Lambda表达式来定义MathOperation接口的操作方法。然后我们定义了GreetingService的sayMessage的实现。
+Lambda表达式让匿名类不再需要，这位Java增添了简洁但实用的函数式编程能力。
+3.作用域
+通过使用Lambda表达式，你可以引用final变量或者有效的final变量（只赋值一次）。如果一个变量被再次赋值，Lambda表达式将抛出一个编译错误。
+
+
+package com.shiyanlou.java8;
+
+public class NewFeaturesTester {
+    final static String salutation = "Hello ";
+
+    public static void main(String args[]){
+        GreetingService greetService1 = message -> 
+        System.out.println(salutation + message);
+        greetService1.sayMessage("Shiyanlou");
+    }
+
+    interface GreetingService {
+       void sayMessage(String message);
+    }
+}
+运行结果如下：
+
+
+运行结果
+二、方法引用
+Java 8中方法也是一种对象，可以By名字来引用。不过方法引用的唯一用途是支持Lambda的简写，使用方法名称来表示Lambda。不能通过方法引用来获得诸如方法签名的相关信息。
+
+方法引用可以通过方法的名字来引用其本身。方法引用是通过::符号（双冒号）来描述的。
+
+它可以用来引用下列类型的方法：
+
+静态方法
+实例方法
+使用new操作符的构造器方法（TreeSet::new）
+更多对于方法引用的介绍，可以参考这一篇博文——《Java 8之方法引用(Method References)》。
+
+package com.shiyanlou.java8;
+
+import java.util.List;
+import java.util.ArrayList;
+
+public class NewFeaturesTester {
+
+    public static void main(String args[]){
+        List names = new ArrayList();
+
+        names.add("Peter");
+        names.add("Linda");
+        names.add("Smith");
+        names.add("Zack");
+        names.add("Bob");
+
+        //     通过System.out::println引用了输出的方法
+        names.forEach(System.out::println);
+    }
+}
+运行结构如下：
+
+
+运行结果
+在学习过程中，应当随时保持查阅官方文档的习惯。
+The Java Tutorials - Lambda Expressions
+The Java Tutorials - Method References
