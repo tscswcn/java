@@ -1,0 +1,36 @@
+/*
+ * Copyright (c) 2019. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+ * Morbi non lorem porttitor neque feugiat blandit. Ut vitae ipsum eget quam lacinia accumsan.
+ * Etiam sed turpis ac ipsum condimentum fringilla. Maecenas magna.
+ * Proin dapibus sapien vel ante. Aliquam erat volutpat. Pellentesque sagittis ligula eget metus.
+ * Vestibulum commodo. Ut rhoncus gravida arcu.
+ */
+
+package Day23;
+
+public class LambdaDemo1 {
+
+    interface MathOperation{
+    int operation(int a,int b);
+    }
+
+    private int operation(int a,int b,MathOperation mathOperation){
+        return mathOperation.operation(a,b);
+    }
+
+    public static void main(String arg[]){
+    LambdaDemo1 test= new LambdaDemo1();
+        MathOperation add=(int a,int b) -> a+b;
+        MathOperation sub=(int a ,int b)-> a-b;
+        MathOperation mul=(int a,int b)-> a*b;
+        MathOperation dev=(int a,int b)-> a/b;
+
+
+  System.out.print("加法"+test.operation(5,10,add));
+        System.out.print("减法"+test.operation(10,5,sub));
+        System.out.print("乘法"+test.operation(10,5,mul));
+        System.out.print("除法"+test.operation(10,5,dev));
+
+
+}
+}
